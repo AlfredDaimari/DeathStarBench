@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./reservation
-          image: adaim/reserve:latest
+          image: localhost:5000/adaim/reserve:latest
           name: hotel-reserv-reservation
           ports:
             - containerPort: 8087

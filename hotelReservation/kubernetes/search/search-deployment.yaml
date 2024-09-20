@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./search
-          image: adaim/search:latest
+          image: localhost:5000/adaim/search:latest
           name: hotel-reserv-search
           ports:
             - containerPort: 8082

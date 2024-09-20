@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./profile
-          image: adaim/profile:latest
+          image: localhost:5000/adaim/profile:latest
           name: hotel-reserv-profile
           ports:
             - containerPort: 8081
