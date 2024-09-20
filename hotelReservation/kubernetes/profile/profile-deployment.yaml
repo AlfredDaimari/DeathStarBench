@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./profile
-          image: deathstarbench/hotel-reservation:latest
+          image: adaim/profile:latest
           name: hotel-reserv-profile
           ports:
             - containerPort: 8081
