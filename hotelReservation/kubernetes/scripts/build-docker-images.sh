@@ -12,7 +12,7 @@ do
   IMAGE=${i}
   echo Processing image ${IMAGE}
   cd $ROOT_FOLDER
-  $EXEC build -t "$USER"/"$IMAGE":"$TAG" -f Dockerfile . --platform linux/arm64,linux/amd64 --push
+  $EXEC build -t "$USER"/"$IMAGE":"$TAG" -f Dockerfile . --platform linux/amd64 --push
   cd $ROOT_FOLDER
   echo
 done
