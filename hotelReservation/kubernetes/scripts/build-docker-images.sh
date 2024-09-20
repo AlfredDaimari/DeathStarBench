@@ -1,27 +1,19 @@
 #!/bin/bash
-
-cd $(dirname $0)/..
-
-
 EXEC="docker buildx"
-
-USER="igorrudyk1"
-
+USER="adaim"
 TAG="latest"
 
-# ENTER THE ROOT FOLDER
-cd ../
+# start from the root folder that is hotelReservation/kubernetes
 ROOT_FOLDER=$(pwd)
 $EXEC create --name mybuilder --use
 
-for i in hotelreservation #frontend geo profile rate recommendation reserve search user #uncomment to build multiple images
+for i in frontend geo profile rate recommendation reserve search user
 do
   IMAGE=${i}
   echo Processing image ${IMAGE}
   cd $ROOT_FOLDER
   $EXEC build -t "$USER"/"$IMAGE":"$TAG" -f Dockerfile . --platform linux/arm64,linux/amd64 --push
   cd $ROOT_FOLDER
-
   echo
 done
 
