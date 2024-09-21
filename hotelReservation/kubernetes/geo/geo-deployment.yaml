@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./geo
-          image: localhost:5000/adaim/geo:latest
+          image: localhost:5000/adaim/deathstarbench:latest
           name: hotel-reserv-geo
           ports:
             - containerPort: 8083
