@@ -7,7 +7,7 @@ TAG="latest"
 ROOT_FOLDER=$(pwd)
 $EXEC create --name mybuilder --use
 
-for i in frontend geo profile rate recommendation reserve search user
+for i in hotelreservation frontend geo profile rate recommendation reserve search user
 do
   IMAGE=${i}
   echo Processing image ${IMAGE}
