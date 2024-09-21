@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./frontend
-          image: localhost:5000/adaim/deathstarbench:latest
+          image: localhost:5000/adaim/hotelres:latest
           name: hotel-reserv-frontend
           ports:
             - containerPort: 5000

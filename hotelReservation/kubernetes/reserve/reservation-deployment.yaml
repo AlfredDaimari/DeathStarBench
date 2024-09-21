@@ -28,7 +28,7 @@ spec:
       containers:
         - command:
             - ./reservation
-          image: localhost:5000/adaim/deathstarbench:latest
+          image: localhost:5000/adaim/hotelres:latest
           name: hotel-reserv-reservation
           ports:
             - containerPort: 8087
