@@ -1,0 +1,40 @@
+---
+# Source: media-microservices/charts/movie-info-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: movie-info-service
+  name: movie-info-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: movie-info-service
+  template:
+    metadata:
+      labels:
+        service: movie-info-service
+        app: movie-info-service
+    spec:
+      containers:
+      - name: "movie-info-service"
+        image: docker.io/yg397/media-microservices:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+        command:
+        - MovieInfoService
+        volumeMounts:
+        - name: movie-info-service-config
+          mountPath: /media-microservices/config/jaeger-config.yml
+          subPath: jaeger-config.yml
+        - name: movie-info-service-config
+          mountPath: /media-microservices/config/service-config.json
+          subPath: service-config.json
+      volumes:
+      - name: movie-info-service-config
+        configMap:
+          name: movie-info-service
+      hostname: movie-info-service
+      restartPolicy: Always

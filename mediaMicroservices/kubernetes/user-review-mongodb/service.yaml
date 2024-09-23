@@ -1,0 +1,14 @@
+---
+# Source: media-microservices/charts/user-review-mongodb/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-review-mongodb
+spec:
+  type: ClusterIP
+  ports:
+  - name: "27017"
+    port: 27017
+    targetPort: 27017
+  selector:
+    service: user-review-mongodb

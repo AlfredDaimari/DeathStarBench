@@ -1,0 +1,38 @@
+---
+# Source: media-microservices/charts/movie-id-mongodb/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: movie-id-mongodb
+  name: movie-id-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: movie-id-mongodb
+  template:
+    metadata:
+      labels:
+        service: movie-id-mongodb
+        app: movie-id-mongodb
+    spec:
+      containers:
+      - name: "movie-id-mongodb"
+        image: docker.io/library/mongo:4.4.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017
+        args:
+        - --config
+        - /media-microservices/config/mongod.conf
+        volumeMounts:
+        - name: movie-id-mongodb-config
+          mountPath: /media-microservices/config/mongod.conf
+          subPath: mongod.conf
+      volumes:
+      - name: movie-id-mongodb-config
+        configMap:
+          name: movie-id-mongodb
+      hostname: movie-id-mongodb
+      restartPolicy: Always

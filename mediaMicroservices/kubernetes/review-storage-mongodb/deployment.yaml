@@ -1,0 +1,38 @@
+---
+# Source: media-microservices/charts/review-storage-mongodb/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: review-storage-mongodb
+  name: review-storage-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: review-storage-mongodb
+  template:
+    metadata:
+      labels:
+        service: review-storage-mongodb
+        app: review-storage-mongodb
+    spec:
+      containers:
+      - name: "review-storage-mongodb"
+        image: docker.io/library/mongo:4.4.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017
+        args:
+        - --config
+        - /media-microservices/config/mongod.conf
+        volumeMounts:
+        - name: review-storage-mongodb-config
+          mountPath: /media-microservices/config/mongod.conf
+          subPath: mongod.conf
+      volumes:
+      - name: review-storage-mongodb-config
+        configMap:
+          name: review-storage-mongodb
+      hostname: review-storage-mongodb
+      restartPolicy: Always

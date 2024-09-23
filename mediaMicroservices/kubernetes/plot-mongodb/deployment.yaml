@@ -1,0 +1,38 @@
+---
+# Source: media-microservices/charts/plot-mongodb/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: plot-mongodb
+  name: plot-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: plot-mongodb
+  template:
+    metadata:
+      labels:
+        service: plot-mongodb
+        app: plot-mongodb
+    spec:
+      containers:
+      - name: "plot-mongodb"
+        image: docker.io/library/mongo:4.4.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017
+        args:
+        - --config
+        - /media-microservices/config/mongod.conf
+        volumeMounts:
+        - name: plot-mongodb-config
+          mountPath: /media-microservices/config/mongod.conf
+          subPath: mongod.conf
+      volumes:
+      - name: plot-mongodb-config
+        configMap:
+          name: plot-mongodb
+      hostname: plot-mongodb
+      restartPolicy: Always

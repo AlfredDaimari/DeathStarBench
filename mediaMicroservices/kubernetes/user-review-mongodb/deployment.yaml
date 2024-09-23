@@ -1,0 +1,38 @@
+---
+# Source: media-microservices/charts/user-review-mongodb/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: user-review-mongodb
+  name: user-review-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: user-review-mongodb
+  template:
+    metadata:
+      labels:
+        service: user-review-mongodb
+        app: user-review-mongodb
+    spec:
+      containers:
+      - name: "user-review-mongodb"
+        image: docker.io/library/mongo:4.4.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017
+        args:
+        - --config
+        - /media-microservices/config/mongod.conf
+        volumeMounts:
+        - name: user-review-mongodb-config
+          mountPath: /media-microservices/config/mongod.conf
+          subPath: mongod.conf
+      volumes:
+      - name: user-review-mongodb-config
+        configMap:
+          name: user-review-mongodb
+      hostname: user-review-mongodb
+      restartPolicy: Always

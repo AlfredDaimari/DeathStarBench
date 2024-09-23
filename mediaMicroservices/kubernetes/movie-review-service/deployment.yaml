@@ -1,0 +1,40 @@
+---
+# Source: media-microservices/charts/movie-review-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: movie-review-service
+  name: movie-review-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: movie-review-service
+  template:
+    metadata:
+      labels:
+        service: movie-review-service
+        app: movie-review-service
+    spec:
+      containers:
+      - name: "movie-review-service"
+        image: docker.io/yg397/media-microservices:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+        command:
+        - MovieReviewService
+        volumeMounts:
+        - name: movie-review-service-config
+          mountPath: /media-microservices/config/jaeger-config.yml
+          subPath: jaeger-config.yml
+        - name: movie-review-service-config
+          mountPath: /media-microservices/config/service-config.json
+          subPath: service-config.json
+      volumes:
+      - name: movie-review-service-config
+        configMap:
+          name: movie-review-service
+      hostname: movie-review-service
+      restartPolicy: Always

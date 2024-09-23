@@ -1,0 +1,13 @@
+---
+# Source: media-microservices/charts/user-review-mongodb/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-review-mongodb
+  labels:
+    mediamicroservices/service: user-review-mongodb
+data:
+  mongod.conf: |    
+    net:
+      tls:
+        mode: disabled

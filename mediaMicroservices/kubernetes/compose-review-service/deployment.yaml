@@ -1,0 +1,40 @@
+---
+# Source: media-microservices/charts/compose-review-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: compose-review-service
+  name: compose-review-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: compose-review-service
+  template:
+    metadata:
+      labels:
+        service: compose-review-service
+        app: compose-review-service
+    spec:
+      containers:
+      - name: "compose-review-service"
+        image: docker.io/yg397/media-microservices:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+        command:
+        - ComposeReviewService
+        volumeMounts:
+        - name: compose-review-service-config
+          mountPath: /media-microservices/config/jaeger-config.yml
+          subPath: jaeger-config.yml
+        - name: compose-review-service-config
+          mountPath: /media-microservices/config/service-config.json
+          subPath: service-config.json
+      volumes:
+      - name: compose-review-service-config
+        configMap:
+          name: compose-review-service
+      hostname: compose-review-service
+      restartPolicy: Always

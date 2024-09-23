@@ -1,0 +1,13 @@
+---
+# Source: media-microservices/charts/movie-id-mongodb/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movie-id-mongodb
+  labels:
+    mediamicroservices/service: movie-id-mongodb
+data:
+  mongod.conf: |    
+    net:
+      tls:
+        mode: disabled

@@ -1,0 +1,14 @@
+---
+# Source: media-microservices/charts/movie-review-redis/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: movie-review-redis
+spec:
+  type: ClusterIP
+  ports:
+  - name: "6379"
+    port: 6379
+    targetPort: 6379
+  selector:
+    service: movie-review-redis

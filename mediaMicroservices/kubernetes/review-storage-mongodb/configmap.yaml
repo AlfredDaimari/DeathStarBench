@@ -1,0 +1,13 @@
+---
+# Source: media-microservices/charts/review-storage-mongodb/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: review-storage-mongodb
+  labels:
+    mediamicroservices/service: review-storage-mongodb
+data:
+  mongod.conf: |    
+    net:
+      tls:
+        mode: disabled

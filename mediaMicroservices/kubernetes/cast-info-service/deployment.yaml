@@ -1,0 +1,40 @@
+---
+# Source: media-microservices/charts/cast-info-service/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: cast-info-service
+  name: cast-info-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: cast-info-service
+  template:
+    metadata:
+      labels:
+        service: cast-info-service
+        app: cast-info-service
+    spec:
+      containers:
+      - name: "cast-info-service"
+        image: docker.io/yg397/media-microservices:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9090
+        command:
+        - CastInfoService
+        volumeMounts:
+        - name: cast-info-service-config
+          mountPath: /media-microservices/config/jaeger-config.yml
+          subPath: jaeger-config.yml
+        - name: cast-info-service-config
+          mountPath: /media-microservices/config/service-config.json
+          subPath: service-config.json
+      volumes:
+      - name: cast-info-service-config
+        configMap:
+          name: cast-info-service
+      hostname: cast-info-service
+      restartPolicy: Always

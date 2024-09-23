@@ -1,0 +1,13 @@
+---
+# Source: media-microservices/charts/user-mongodb/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-mongodb
+  labels:
+    mediamicroservices/service: user-mongodb
+data:
+  mongod.conf: |    
+    net:
+      tls:
+        mode: disabled

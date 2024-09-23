@@ -1,0 +1,38 @@
+---
+# Source: media-microservices/charts/cast-info-mongodb/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: cast-info-mongodb
+  name: cast-info-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: cast-info-mongodb
+  template:
+    metadata:
+      labels:
+        service: cast-info-mongodb
+        app: cast-info-mongodb
+    spec:
+      containers:
+      - name: "cast-info-mongodb"
+        image: docker.io/library/mongo:4.4.6
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 27017
+        args:
+        - --config
+        - /media-microservices/config/mongod.conf
+        volumeMounts:
+        - name: cast-info-mongodb-config
+          mountPath: /media-microservices/config/mongod.conf
+          subPath: mongod.conf
+      volumes:
+      - name: cast-info-mongodb-config
+        configMap:
+          name: cast-info-mongodb
+      hostname: cast-info-mongodb
+      restartPolicy: Always

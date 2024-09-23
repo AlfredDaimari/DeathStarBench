@@ -1,0 +1,13 @@
+---
+# Source: media-microservices/charts/cast-info-mongodb/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cast-info-mongodb
+  labels:
+    mediamicroservices/service: cast-info-mongodb
+data:
+  mongod.conf: |    
+    net:
+      tls:
+        mode: disabled

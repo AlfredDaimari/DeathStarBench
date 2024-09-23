@@ -1,0 +1,14 @@
+---
+# Source: media-microservices/charts/compose-review-memcached/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: compose-review-memcached
+spec:
+  type: ClusterIP
+  ports:
+  - name: "11211"
+    port: 11211
+    targetPort: 11211
+  selector:
+    service: compose-review-memcached

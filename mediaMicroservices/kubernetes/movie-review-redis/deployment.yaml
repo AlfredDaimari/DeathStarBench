@@ -1,0 +1,37 @@
+---
+# Source: media-microservices/charts/movie-review-redis/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: movie-review-redis
+  name: movie-review-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: movie-review-redis
+  template:
+    metadata:
+      labels:
+        service: movie-review-redis
+        app: movie-review-redis
+    spec:
+      containers:
+      - name: "movie-review-redis"
+        image: docker.io/library/redis:6.2.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+        args:
+        - /media-microservices/config/redis.conf
+        volumeMounts:
+        - name: movie-review-redis-config
+          mountPath: /media-microservices/config/redis.conf
+          subPath: redis.conf
+      volumes:
+      - name: movie-review-redis-config
+        configMap:
+          name: movie-review-redis
+      hostname: movie-review-redis
+      restartPolicy: Always

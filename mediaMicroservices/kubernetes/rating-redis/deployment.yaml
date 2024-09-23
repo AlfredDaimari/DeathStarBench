@@ -1,0 +1,37 @@
+---
+# Source: media-microservices/charts/rating-redis/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: rating-redis
+  name: rating-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: rating-redis
+  template:
+    metadata:
+      labels:
+        service: rating-redis
+        app: rating-redis
+    spec:
+      containers:
+      - name: "rating-redis"
+        image: docker.io/library/redis:6.2.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+        args:
+        - /media-microservices/config/redis.conf
+        volumeMounts:
+        - name: rating-redis-config
+          mountPath: /media-microservices/config/redis.conf
+          subPath: redis.conf
+      volumes:
+      - name: rating-redis-config
+        configMap:
+          name: rating-redis
+      hostname: rating-redis
+      restartPolicy: Always
