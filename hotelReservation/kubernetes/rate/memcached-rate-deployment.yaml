@@ -41,5 +41,5 @@ spec:
           requests:
             cpu: 100m
       restartPolicy: Always
-      schedulerName: descheduler
+      schedulerName: poseidon
 status: {}

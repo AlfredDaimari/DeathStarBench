@@ -40,7 +40,7 @@ spec:
         - mountPath: /data/db
           name: geo
       restartPolicy: Always
-      schedulerName: descheduler
+      schedulerName: poseidon
       volumes:
       - name: geo
         persistentVolumeClaim:

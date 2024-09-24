@@ -41,7 +41,7 @@ spec:
           name: recommendation
       hostname: recommendation-db
       restartPolicy: Always
-      schedulerName: descheduler
+      schedulerName: poseidon
       volumes:
       - name: recommendation
         persistentVolumeClaim:

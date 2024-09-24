@@ -41,7 +41,7 @@ spec:
           name: reservation
       hostname: reservation-db
       restartPolicy: Always
-      schedulerName: descheduler
+      schedulerName: poseidon
       volumes:
       - name: reservation
         persistentVolumeClaim:

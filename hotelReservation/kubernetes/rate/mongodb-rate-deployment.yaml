@@ -40,7 +40,7 @@ spec:
         - mountPath: /data/db
           name: rate
       restartPolicy: Always
-      schedulerName: descheduler
+      schedulerName: poseidon
       volumes:
       - name: rate
         persistentVolumeClaim:
