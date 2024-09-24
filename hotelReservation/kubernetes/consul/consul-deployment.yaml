@@ -26,18 +26,19 @@ spec:
         io.kompose.service: consul
     spec:
       containers:
-        - image: hashicorp/consul:latest
-          name: consul
-          ports:
-            - containerPort: 8300
-            - containerPort: 8400
-            - containerPort: 8500
-            - containerPort: 53
-              protocol: UDP
-          resources:
-            requests:
-              cpu: 100m
-            limits:
-              cpu: 1000m
+      - image: hashicorp/consul:latest
+        name: consul
+        ports:
+        - containerPort: 8300
+        - containerPort: 8400
+        - containerPort: 8500
+        - containerPort: 53
+          protocol: UDP
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
       restartPolicy: Always
+      schedulerName: descheduler
 status: {}

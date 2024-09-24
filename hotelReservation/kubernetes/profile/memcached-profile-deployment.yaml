@@ -26,19 +26,20 @@ spec:
         io.kompose.service: memcached-profile
     spec:
       containers:
-        - env:
-            - name: MEMCACHED_CACHE_SIZE
-              value: "128"
-            - name: MEMCACHED_THREADS
-              value: "2"
-          image: memcached
-          name: hotel-reserv-profile-mmc
-          ports:
-            - containerPort: 11211
-          resources:
-            requests:
-              cpu: 100m
-            limits:
-              cpu: 1000m
+      - env:
+        - name: MEMCACHED_CACHE_SIZE
+          value: '128'
+        - name: MEMCACHED_THREADS
+          value: '2'
+        image: memcached
+        name: hotel-reserv-profile-mmc
+        ports:
+        - containerPort: 11211
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
       restartPolicy: Always
+      schedulerName: descheduler
 status: {}

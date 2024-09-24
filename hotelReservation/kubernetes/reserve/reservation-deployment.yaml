@@ -26,16 +26,17 @@ spec:
         io.kompose.service: reservation
     spec:
       containers:
-        - command:
-            - ./reservation
-          image: localhost:5000/adaim/hotelres:latest
-          name: hotel-reserv-reservation
-          ports:
-            - containerPort: 8087
-          resources:
-            requests:
-              cpu: 100m
-            limits:
-              cpu: 1000m
+      - command:
+        - ./reservation
+        image: localhost:5000/adaim/hotelres:latest
+        name: hotel-reserv-reservation
+        ports:
+        - containerPort: 8087
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
       restartPolicy: Always
+      schedulerName: descheduler
 status: {}

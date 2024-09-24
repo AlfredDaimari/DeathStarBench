@@ -26,16 +26,17 @@ spec:
         io.kompose.service: rate
     spec:
       containers:
-        - command:
-            - ./rate
-          image: localhost:5000/adaim/hotelres:latest
-          name: hotel-reserv-rate
-          ports:
-            - containerPort: 8084
-          resources:
-            requests:
-              cpu: 100m
-            limits:
-              cpu: 1000m
+      - command:
+        - ./rate
+        image: localhost:5000/adaim/hotelres:latest
+        name: hotel-reserv-rate
+        ports:
+        - containerPort: 8084
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
       restartPolicy: Always
+      schedulerName: descheduler
 status: {}
