@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/cast-info-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: cast-info-memcached
         app: cast-info-memcached
+        service: cast-info-memcached
     spec:
       containers:
-      - name: "cast-info-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: cast-info-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: cast-info-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: cast-info-memcached-config
           subPath: jaeger-config.yml
-        - name: cast-info-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: cast-info-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: cast-info-memcached-config
-        configMap:
-          name: cast-info-memcached
       hostname: cast-info-memcached
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: cast-info-memcached
+        name: cast-info-memcached-config

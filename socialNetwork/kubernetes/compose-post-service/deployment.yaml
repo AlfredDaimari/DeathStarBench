@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/compose-post-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: compose-post-service
   name: compose-post-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: compose-post-service
         app: compose-post-service
+        service: compose-post-service
     spec:
       containers:
-      - name: "compose-post-service"
+      - command:
+        - ComposePostService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: compose-post-service
         ports:
         - containerPort: 9090
-        command: 
-        - ComposePostService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: compose-post-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: compose-post-service-config
           subPath: jaeger-config.yml
-        - name: compose-post-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: compose-post-service-config
           subPath: service-config.json
-      volumes:
-      - name: compose-post-service-config
-        configMap:
-          name: compose-post-service
       hostname: compose-post-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: compose-post-service
+        name: compose-post-service-config

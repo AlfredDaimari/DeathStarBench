@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/social-graph-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: social-graph-service
   name: social-graph-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: social-graph-service
         app: social-graph-service
+        service: social-graph-service
     spec:
       containers:
-      - name: "social-graph-service"
+      - command:
+        - SocialGraphService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: social-graph-service
         ports:
         - containerPort: 9090
-        command: 
-        - SocialGraphService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: social-graph-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: social-graph-service-config
           subPath: jaeger-config.yml
-        - name: social-graph-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: social-graph-service-config
           subPath: service-config.json
-      volumes:
-      - name: social-graph-service-config
-        configMap:
-          name: social-graph-service
       hostname: social-graph-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: social-graph-service
+        name: social-graph-service-config

@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/nginx-web-server/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,52 +12,53 @@ spec:
   template:
     metadata:
       labels:
-        service: nginx-web-server
         app: nginx-web-server
+        service: nginx-web-server
     spec:
       containers:
-      - name: "nginx-web-server"
+      - env:
+        - name: fqdn_suffix
+          value: .default.svc.cluster.local
         image: docker.io/yg397/openresty-thrift:xenial
         imagePullPolicy: IfNotPresent
+        name: nginx-web-server
         ports:
         - containerPort: 8080
-        env:
-        - name: fqdn_suffix
-          value: ".default.svc.cluster.local"
-        
         volumeMounts:
-        - name: nginx-web-server-config
-          mountPath: /usr/local/openresty/nginx/jaeger-config.json
+        - mountPath: /usr/local/openresty/nginx/jaeger-config.json
+          name: nginx-web-server-config
           subPath: jaeger-config.json
-        - name: nginx-web-server-config
-          mountPath: /usr/local/openresty/nginx/conf/nginx.conf
+        - mountPath: /usr/local/openresty/nginx/conf/nginx.conf
+          name: nginx-web-server-config
           subPath: nginx.conf
-        - name: lua-scripts
-          mountPath: /usr/local/openresty/nginx/lua-scripts
-        - name: gen-lua
-          mountPath: /gen-lua
-
+        - mountPath: /usr/local/openresty/nginx/lua-scripts
+          name: lua-scripts
+        - mountPath: /gen-lua
+          name: gen-lua
+      hostname: nginx-web-server
       initContainers:
-      - name: "alpine-container"
-        image: docker.io/alpine/git:latest
-        imagePullPolicy: IfNotPresent
+      - args:
+        - -c
+        - git clone https://github.com/dimoibiehg/DeathStarBench.git /DeathStarBench
+          && cp -r /DeathStarBench/mediaMicroservices/gen-lua/* /gen-lua/ && cp -r
+          /DeathStarBench/mediaMicroservices/nginx-web-server/lua-scripts/* /lua-scripts/
         command:
         - /bin/sh
-        args:
-        - -c
-        - git clone https://github.com/dimoibiehg/DeathStarBench.git /DeathStarBench && cp -r /DeathStarBench/mediaMicroservices/gen-lua/* /gen-lua/ && cp -r /DeathStarBench/mediaMicroservices/nginx-web-server/lua-scripts/* /lua-scripts/
+        image: docker.io/alpine/git:latest
+        imagePullPolicy: IfNotPresent
+        name: alpine-container
         volumeMounts:
-        - name: lua-scripts
-          mountPath: /lua-scripts
-        - name: gen-lua
-          mountPath: /gen-lua
-      volumes:
-      - name: nginx-web-server-config
-        configMap:
-          name: nginx-web-server
-      - name: lua-scripts
-        emptyDir: {}
-      - name: gen-lua
-        emptyDir: {}
-      hostname: nginx-web-server
+        - mountPath: /lua-scripts
+          name: lua-scripts
+        - mountPath: /gen-lua
+          name: gen-lua
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: nginx-web-server
+        name: nginx-web-server-config
+      - emptyDir: {}
+        name: lua-scripts
+      - emptyDir: {}
+        name: gen-lua

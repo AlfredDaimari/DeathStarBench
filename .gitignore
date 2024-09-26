@@ -11,3 +11,5 @@ wrk2/*.[oa]
 wrk2/obj/
 
 hotelReservation/kubernetes/files.txt
+mediaMicroservices/kubernetes/files.txt
+socialNetwork/kubernetes/files.txt

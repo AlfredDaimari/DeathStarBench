@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/movie-review-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: movie-review-service
         app: movie-review-service
+        service: movie-review-service
     spec:
       containers:
-      - name: "movie-review-service"
+      - command:
+        - MovieReviewService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: movie-review-service
         ports:
         - containerPort: 9090
-        command:
-        - MovieReviewService
         volumeMounts:
-        - name: movie-review-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: movie-review-service-config
           subPath: jaeger-config.yml
-        - name: movie-review-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: movie-review-service-config
           subPath: service-config.json
-      volumes:
-      - name: movie-review-service-config
-        configMap:
-          name: movie-review-service
       hostname: movie-review-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: movie-review-service
+        name: movie-review-service-config

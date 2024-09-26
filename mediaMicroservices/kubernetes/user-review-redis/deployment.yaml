@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/user-review-redis/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,24 +12,25 @@ spec:
   template:
     metadata:
       labels:
-        service: user-review-redis
         app: user-review-redis
+        service: user-review-redis
     spec:
       containers:
-      - name: "user-review-redis"
+      - args:
+        - /media-microservices/config/redis.conf
         image: docker.io/library/redis:6.2.4
         imagePullPolicy: IfNotPresent
+        name: user-review-redis
         ports:
         - containerPort: 6379
-        args:
-        - /media-microservices/config/redis.conf
         volumeMounts:
-        - name: user-review-redis-config
-          mountPath: /media-microservices/config/redis.conf
+        - mountPath: /media-microservices/config/redis.conf
+          name: user-review-redis-config
           subPath: redis.conf
-      volumes:
-      - name: user-review-redis-config
-        configMap:
-          name: user-review-redis
       hostname: user-review-redis
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: user-review-redis
+        name: user-review-redis-config

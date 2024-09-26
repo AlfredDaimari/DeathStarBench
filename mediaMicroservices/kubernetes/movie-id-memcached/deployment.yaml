@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/movie-id-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: movie-id-memcached
         app: movie-id-memcached
+        service: movie-id-memcached
     spec:
       containers:
-      - name: "movie-id-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: movie-id-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: movie-id-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: movie-id-memcached-config
           subPath: jaeger-config.yml
-        - name: movie-id-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: movie-id-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: movie-id-memcached-config
-        configMap:
-          name: movie-id-memcached
       hostname: movie-id-memcached
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: movie-id-memcached
+        name: movie-id-memcached-config

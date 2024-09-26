@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/home-timeline-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: home-timeline-service
   name: home-timeline-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: home-timeline-service
         app: home-timeline-service
+        service: home-timeline-service
     spec:
       containers:
-      - name: "home-timeline-service"
+      - command:
+        - HomeTimelineService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: home-timeline-service
         ports:
         - containerPort: 9090
-        command: 
-        - HomeTimelineService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: home-timeline-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: home-timeline-service-config
           subPath: jaeger-config.yml
-        - name: home-timeline-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: home-timeline-service-config
           subPath: service-config.json
-      volumes:
-      - name: home-timeline-service-config
-        configMap:
-          name: home-timeline-service
       hostname: home-timeline-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: home-timeline-service
+        name: home-timeline-service-config

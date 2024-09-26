@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/review-storage-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: review-storage-memcached
         app: review-storage-memcached
+        service: review-storage-memcached
     spec:
       containers:
-      - name: "review-storage-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: review-storage-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: review-storage-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: review-storage-memcached-config
           subPath: jaeger-config.yml
-        - name: review-storage-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: review-storage-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: review-storage-memcached-config
-        configMap:
-          name: review-storage-memcached
       hostname: review-storage-memcached
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: review-storage-memcached
+        name: review-storage-memcached-config

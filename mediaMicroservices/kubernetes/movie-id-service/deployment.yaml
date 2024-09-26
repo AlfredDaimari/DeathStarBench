@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/movie-id-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: movie-id-service
         app: movie-id-service
+        service: movie-id-service
     spec:
       containers:
-      - name: "movie-id-service"
+      - command:
+        - MovieIdService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: movie-id-service
         ports:
         - containerPort: 9090
-        command:
-        - MovieIdService
         volumeMounts:
-        - name: movie-id-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: movie-id-service-config
           subPath: jaeger-config.yml
-        - name: movie-id-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: movie-id-service-config
           subPath: service-config.json
-      volumes:
-      - name: movie-id-service-config
-        configMap:
-          name: movie-id-service
       hostname: movie-id-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: movie-id-service
+        name: movie-id-service-config

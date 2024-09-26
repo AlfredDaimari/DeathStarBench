@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/user-timeline-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: user-timeline-service
   name: user-timeline-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: user-timeline-service
         app: user-timeline-service
+        service: user-timeline-service
     spec:
       containers:
-      - name: "user-timeline-service"
+      - command:
+        - UserTimelineService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: user-timeline-service
         ports:
         - containerPort: 9090
-        command: 
-        - UserTimelineService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: user-timeline-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: user-timeline-service-config
           subPath: jaeger-config.yml
-        - name: user-timeline-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: user-timeline-service-config
           subPath: service-config.json
-      volumes:
-      - name: user-timeline-service-config
-        configMap:
-          name: user-timeline-service
       hostname: user-timeline-service
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: user-timeline-service
+        name: user-timeline-service-config

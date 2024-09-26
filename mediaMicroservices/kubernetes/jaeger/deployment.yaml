@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/jaeger/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,13 +12,16 @@ spec:
   template:
     metadata:
       labels:
-        service: jaeger
         app: jaeger
+        service: jaeger
     spec:
       containers:
-      - name: "jaeger"
+      - env:
+        - name: COLLECTOR_ZIPKIN_HTTP_PORT
+          value: '9411'
         image: docker.io/jaegertracing/all-in-one:latest
         imagePullPolicy: IfNotPresent
+        name: jaeger
         ports:
         - containerPort: 5775
         - containerPort: 6831
@@ -29,20 +30,17 @@ spec:
         - containerPort: 16686
         - containerPort: 14268
         - containerPort: 9411
-        env:
-        - name: COLLECTOR_ZIPKIN_HTTP_PORT
-          value: "9411"
-        
         volumeMounts:
-        - name: jaeger-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: jaeger-config
           subPath: jaeger-config.yml
-        - name: jaeger-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: jaeger-config
           subPath: service-config.json
-      volumes:
-      - name: jaeger-config
-        configMap:
-          name: jaeger
       hostname: jaeger
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: jaeger
+        name: jaeger-config

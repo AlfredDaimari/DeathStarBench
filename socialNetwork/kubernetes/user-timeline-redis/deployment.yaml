@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/user-timeline-redis/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: user-timeline-redis
   name: user-timeline-redis
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,31 +12,32 @@ spec:
   template:
     metadata:
       labels:
-        service: user-timeline-redis
         app: user-timeline-redis
+        service: user-timeline-redis
     spec:
       containers:
-      - name: "user-timeline-redis"
+      - args:
+        - /social-network-microservices/config/redis.conf
         image: docker.io/library/redis:6.2.4
         imagePullPolicy: IfNotPresent
+        name: user-timeline-redis
         ports:
         - containerPort: 6379
-        args:
-        - /social-network-microservices/config/redis.conf           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: user-timeline-redis-config
-          mountPath: /social-network-microservices/config/redis.conf
+        - mountPath: /social-network-microservices/config/redis.conf
+          name: user-timeline-redis-config
           subPath: redis.conf
-      volumes:
-      - name: user-timeline-redis-config
-        configMap:
-          name: user-timeline-redis
       hostname: user-timeline-redis
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: user-timeline-redis
+        name: user-timeline-redis-config

@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/user-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: user-memcached
   name: user-memcached
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,32 +12,33 @@ spec:
   template:
     metadata:
       labels:
-        service: user-memcached
         app: user-memcached
+        service: user-memcached
     spec:
       containers:
-      - name: "user-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: user-memcached
         ports:
-        - containerPort: 11211           
+        - containerPort: 11211
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: user-memcached-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: user-memcached-config
           subPath: jaeger-config.yml
-        - name: user-memcached-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: user-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: user-memcached-config
-        configMap:
-          name: user-memcached
       hostname: user-memcached
       restartPolicy: Always
+      schedulerName: poseidon
+      volumes:
+      - configMap:
+          name: user-memcached
+        name: user-memcached-config
