@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/plot-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: plot-service
         app: plot-service
+        service: plot-service
     spec:
       containers:
-      - name: "plot-service"
+      - command:
+        - PlotService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: plot-service
         ports:
         - containerPort: 9090
-        command:
-        - PlotService
         volumeMounts:
-        - name: plot-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: plot-service-config
           subPath: jaeger-config.yml
-        - name: plot-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: plot-service-config
           subPath: service-config.json
-      volumes:
-      - name: plot-service-config
-        configMap:
-          name: plot-service
       hostname: plot-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: plot-service
+        name: plot-service-config

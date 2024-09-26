@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/page-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: page-service
         app: page-service
+        service: page-service
     spec:
       containers:
-      - name: "page-service"
+      - command:
+        - PageService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: page-service
         ports:
         - containerPort: 9090
-        command:
-        - PageService
         volumeMounts:
-        - name: page-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: page-service-config
           subPath: jaeger-config.yml
-        - name: page-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: page-service-config
           subPath: service-config.json
-      volumes:
-      - name: page-service-config
-        configMap:
-          name: page-service
       hostname: page-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: page-service
+        name: page-service-config

@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/unique-id-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: unique-id-service
         app: unique-id-service
+        service: unique-id-service
     spec:
       containers:
-      - name: "unique-id-service"
+      - command:
+        - UniqueIdService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: unique-id-service
         ports:
         - containerPort: 9090
-        command:
-        - UniqueIdService
         volumeMounts:
-        - name: unique-id-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: unique-id-service-config
           subPath: jaeger-config.yml
-        - name: unique-id-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: unique-id-service-config
           subPath: service-config.json
-      volumes:
-      - name: unique-id-service-config
-        configMap:
-          name: unique-id-service
       hostname: unique-id-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: unique-id-service
+        name: unique-id-service-config

@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/compose-review-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: compose-review-memcached
         app: compose-review-memcached
+        service: compose-review-memcached
     spec:
       containers:
-      - name: "compose-review-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: compose-review-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: compose-review-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: compose-review-memcached-config
           subPath: jaeger-config.yml
-        - name: compose-review-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: compose-review-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: compose-review-memcached-config
-        configMap:
-          name: compose-review-memcached
       hostname: compose-review-memcached
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: compose-review-memcached
+        name: compose-review-memcached-config

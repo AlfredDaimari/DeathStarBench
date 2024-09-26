@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/plot-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: plot-memcached
         app: plot-memcached
+        service: plot-memcached
     spec:
       containers:
-      - name: "plot-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: plot-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: plot-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: plot-memcached-config
           subPath: jaeger-config.yml
-        - name: plot-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: plot-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: plot-memcached-config
-        configMap:
-          name: plot-memcached
       hostname: plot-memcached
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: plot-memcached
+        name: plot-memcached-config

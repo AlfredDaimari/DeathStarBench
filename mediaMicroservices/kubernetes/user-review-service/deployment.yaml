@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/user-review-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: user-review-service
         app: user-review-service
+        service: user-review-service
     spec:
       containers:
-      - name: "user-review-service"
+      - command:
+        - UserReviewService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: user-review-service
         ports:
         - containerPort: 9090
-        command:
-        - UserReviewService
         volumeMounts:
-        - name: user-review-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: user-review-service-config
           subPath: jaeger-config.yml
-        - name: user-review-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: user-review-service-config
           subPath: service-config.json
-      volumes:
-      - name: user-review-service-config
-        configMap:
-          name: user-review-service
       hostname: user-review-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: user-review-service
+        name: user-review-service-config

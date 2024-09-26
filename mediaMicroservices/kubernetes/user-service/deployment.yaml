@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/user-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: user-service
         app: user-service
+        service: user-service
     spec:
       containers:
-      - name: "user-service"
+      - command:
+        - UserService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: user-service
         ports:
         - containerPort: 9090
-        command:
-        - UserService
         volumeMounts:
-        - name: user-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: user-service-config
           subPath: jaeger-config.yml
-        - name: user-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: user-service-config
           subPath: service-config.json
-      volumes:
-      - name: user-service-config
-        configMap:
-          name: user-service
       hostname: user-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: user-service
+        name: user-service-config

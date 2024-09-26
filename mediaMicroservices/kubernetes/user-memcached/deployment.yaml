@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/user-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,25 +12,26 @@ spec:
   template:
     metadata:
       labels:
-        service: user-memcached
         app: user-memcached
+        service: user-memcached
     spec:
       containers:
-      - name: "user-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: user-memcached
         ports:
         - containerPort: 11211
         volumeMounts:
-        - name: user-memcached-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: user-memcached-config
           subPath: jaeger-config.yml
-        - name: user-memcached-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: user-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: user-memcached-config
-        configMap:
-          name: user-memcached
       hostname: user-memcached
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: user-memcached
+        name: user-memcached-config

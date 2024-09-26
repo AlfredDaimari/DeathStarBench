@@ -1,5 +1,3 @@
----
-# Source: media-microservices/charts/rating-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,27 +12,28 @@ spec:
   template:
     metadata:
       labels:
-        service: rating-service
         app: rating-service
+        service: rating-service
     spec:
       containers:
-      - name: "rating-service"
+      - command:
+        - RatingService
         image: docker.io/yg397/media-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: rating-service
         ports:
         - containerPort: 9090
-        command:
-        - RatingService
         volumeMounts:
-        - name: rating-service-config
-          mountPath: /media-microservices/config/jaeger-config.yml
+        - mountPath: /media-microservices/config/jaeger-config.yml
+          name: rating-service-config
           subPath: jaeger-config.yml
-        - name: rating-service-config
-          mountPath: /media-microservices/config/service-config.json
+        - mountPath: /media-microservices/config/service-config.json
+          name: rating-service-config
           subPath: service-config.json
-      volumes:
-      - name: rating-service-config
-        configMap:
-          name: rating-service
       hostname: rating-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: rating-service
+        name: rating-service-config
