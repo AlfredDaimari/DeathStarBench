@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/jaeger/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: jaeger
   name: jaeger
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,13 +12,16 @@ spec:
   template:
     metadata:
       labels:
-        service: jaeger
         app: jaeger
+        service: jaeger
     spec:
       containers:
-      - name: "jaeger"
+      - env:
+        - name: COLLECTOR_ZIPKIN_HTTP_PORT
+          value: '9411'
         image: docker.io/jaegertracing/all-in-one:latest
         imagePullPolicy: IfNotPresent
+        name: jaeger
         ports:
         - containerPort: 5775
         - containerPort: 6831
@@ -29,27 +30,24 @@ spec:
         - containerPort: 16686
         - containerPort: 14268
         - containerPort: 9411
-        env:
-        - name: COLLECTOR_ZIPKIN_HTTP_PORT
-          value: "9411"
-                   
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: jaeger-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: jaeger-config
           subPath: jaeger-config.yml
-        - name: jaeger-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: jaeger-config
           subPath: service-config.json
-      volumes:
-      - name: jaeger-config
-        configMap:
-          name: jaeger
       hostname: jaeger
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: jaeger
+        name: jaeger-config

@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/url-shorten-mongodb/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: url-shorten-mongodb
   name: url-shorten-mongodb
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,32 +12,33 @@ spec:
   template:
     metadata:
       labels:
-        service: url-shorten-mongodb
         app: url-shorten-mongodb
+        service: url-shorten-mongodb
     spec:
       containers:
-      - name: "url-shorten-mongodb"
+      - args:
+        - --config
+        - /social-network-microservices/config/mongod.conf
         image: docker.io/library/mongo:4.4.6
         imagePullPolicy: IfNotPresent
+        name: url-shorten-mongodb
         ports:
         - containerPort: 27017
-        args:
-        - --config
-        - /social-network-microservices/config/mongod.conf           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: url-shorten-mongodb-config
-          mountPath: /social-network-microservices/config/mongod.conf
+        - mountPath: /social-network-microservices/config/mongod.conf
+          name: url-shorten-mongodb-config
           subPath: mongod.conf
-      volumes:
-      - name: url-shorten-mongodb-config
-        configMap:
-          name: url-shorten-mongodb
       hostname: url-shorten-mongodb
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: url-shorten-mongodb
+        name: url-shorten-mongodb-config

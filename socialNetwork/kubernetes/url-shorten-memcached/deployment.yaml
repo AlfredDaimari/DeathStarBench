@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/url-shorten-memcached/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: url-shorten-memcached
   name: url-shorten-memcached
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,32 +12,33 @@ spec:
   template:
     metadata:
       labels:
-        service: url-shorten-memcached
         app: url-shorten-memcached
+        service: url-shorten-memcached
     spec:
       containers:
-      - name: "url-shorten-memcached"
-        image: docker.io/library/memcached:1.6.7
+      - image: docker.io/library/memcached:1.6.7
         imagePullPolicy: IfNotPresent
+        name: url-shorten-memcached
         ports:
-        - containerPort: 11211           
+        - containerPort: 11211
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: url-shorten-memcached-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: url-shorten-memcached-config
           subPath: jaeger-config.yml
-        - name: url-shorten-memcached-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: url-shorten-memcached-config
           subPath: service-config.json
-      volumes:
-      - name: url-shorten-memcached-config
-        configMap:
-          name: url-shorten-memcached
       hostname: url-shorten-memcached
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: url-shorten-memcached
+        name: url-shorten-memcached-config

@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/nginx-thrift/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: nginx-thrift
   name: nginx-thrift
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,50 +12,56 @@ spec:
   template:
     metadata:
       labels:
-        service: nginx-thrift
         app: nginx-thrift
-    spec: 
+        service: nginx-thrift
+    spec:
       containers:
-      - name: "nginx-thrift"
+      - env:
+        - name: fqdn_suffix
+          value: .default.svc.cluster.local
         image: docker.io/yg397/openresty-thrift:xenial
         imagePullPolicy: IfNotPresent
+        name: nginx-thrift
         ports:
         - containerPort: 8080
-        env:
-        - name: fqdn_suffix
-          value: ".default.svc.cluster.local"
-                   
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: nginx-thrift-config
-          mountPath: /usr/local/openresty/nginx/jaeger-config.json
+        - mountPath: /usr/local/openresty/nginx/jaeger-config.json
+          name: nginx-thrift-config
           subPath: jaeger-config.json
-        - name: nginx-thrift-config
-          mountPath: /usr/local/openresty/nginx/conf/nginx.conf
+        - mountPath: /usr/local/openresty/nginx/conf/nginx.conf
+          name: nginx-thrift-config
           subPath: nginx.conf
-        - name: lua-scripts
-          mountPath: /usr/local/openresty/nginx/lua-scripts
-        - name: lua-thrift
-          mountPath: /usr/local/openresty/lualib/thrift
-        - name: pages
-          mountPath: /usr/local/openresty/nginx/pages
-        - name: gen-lua
-          mountPath: /gen-lua
-        - name: keys
-          mountPath: /keys
-
+        - mountPath: /usr/local/openresty/nginx/lua-scripts
+          name: lua-scripts
+        - mountPath: /usr/local/openresty/lualib/thrift
+          name: lua-thrift
+        - mountPath: /usr/local/openresty/nginx/pages
+          name: pages
+        - mountPath: /gen-lua
+          name: gen-lua
+        - mountPath: /keys
+          name: keys
+      hostname: nginx-thrift
       initContainers:
-      - name: "alpine-container"
+      - args:
+        - -c
+        - git clone https://github.com/dimoibiehg/DeathStarBench.git /DeathStarBench
+          && cp -r /DeathStarBench/socialNetwork/gen-lua/* /gen-lua/ && cp -r /DeathStarBench/socialNetwork/docker/openresty-thrift/lua-thrift/*
+          /lua-thrift/ && cp -r /DeathStarBench/socialNetwork/nginx-web-server/lua-scripts/*
+          /lua-scripts/ && cp -r /DeathStarBench/socialNetwork/nginx-web-server/pages/*
+          /pages/ && cp /DeathStarBench/socialNetwork/keys/* /keys/
+        command:
+        - /bin/sh
         image: docker.io/alpine/git:latest
         imagePullPolicy: IfNotPresent
-        command: 
-        - /bin/sh
+        name: alpine-container
         resources:
           limits:
             cpu: 100m
@@ -65,33 +69,30 @@ spec:
           requests:
             cpu: 100m
             memory: 128Mi
-        args:
-        - -c
-        - git clone https://github.com/dimoibiehg/DeathStarBench.git /DeathStarBench && cp -r /DeathStarBench/socialNetwork/gen-lua/* /gen-lua/ && cp -r /DeathStarBench/socialNetwork/docker/openresty-thrift/lua-thrift/* /lua-thrift/ && cp -r /DeathStarBench/socialNetwork/nginx-web-server/lua-scripts/* /lua-scripts/ && cp -r /DeathStarBench/socialNetwork/nginx-web-server/pages/* /pages/ && cp /DeathStarBench/socialNetwork/keys/* /keys/         
         volumeMounts:
-        - name: lua-scripts
-          mountPath: /lua-scripts
-        - name: lua-thrift
-          mountPath: /lua-thrift
-        - name: pages
-          mountPath: /pages
-        - name: gen-lua
-          mountPath: /gen-lua
-        - name: keys
-          mountPath: /keys
-      volumes:
-      - name: nginx-thrift-config
-        configMap:
-          name: nginx-thrift
-      - name: lua-scripts
-        emptyDir: {}
-      - name: pages
-        emptyDir: {}
-      - name: gen-lua
-        emptyDir: {}
-      - name: lua-thrift
-        emptyDir: {}
-      - name: keys
-        emptyDir: {}
-      hostname: nginx-thrift
+        - mountPath: /lua-scripts
+          name: lua-scripts
+        - mountPath: /lua-thrift
+          name: lua-thrift
+        - mountPath: /pages
+          name: pages
+        - mountPath: /gen-lua
+          name: gen-lua
+        - mountPath: /keys
+          name: keys
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: nginx-thrift
+        name: nginx-thrift-config
+      - emptyDir: {}
+        name: lua-scripts
+      - emptyDir: {}
+        name: pages
+      - emptyDir: {}
+        name: gen-lua
+      - emptyDir: {}
+        name: lua-thrift
+      - emptyDir: {}
+        name: keys

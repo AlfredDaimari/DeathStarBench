@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/user-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: user-service
   name: user-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: user-service
         app: user-service
+        service: user-service
     spec:
       containers:
-      - name: "user-service"
+      - command:
+        - UserService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: user-service
         ports:
         - containerPort: 9090
-        command: 
-        - UserService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: user-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: user-service-config
           subPath: jaeger-config.yml
-        - name: user-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: user-service-config
           subPath: service-config.json
-      volumes:
-      - name: user-service-config
-        configMap:
-          name: user-service
       hostname: user-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: user-service
+        name: user-service-config

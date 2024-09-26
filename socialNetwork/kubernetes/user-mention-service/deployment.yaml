@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/user-mention-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: user-mention-service
   name: user-mention-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: user-mention-service
         app: user-mention-service
+        service: user-mention-service
     spec:
       containers:
-      - name: "user-mention-service"
+      - command:
+        - UserMentionService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: user-mention-service
         ports:
         - containerPort: 9090
-        command: 
-        - UserMentionService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: user-mention-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: user-mention-service-config
           subPath: jaeger-config.yml
-        - name: user-mention-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: user-mention-service-config
           subPath: service-config.json
-      volumes:
-      - name: user-mention-service-config
-        configMap:
-          name: user-mention-service
       hostname: user-mention-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: user-mention-service
+        name: user-mention-service-config

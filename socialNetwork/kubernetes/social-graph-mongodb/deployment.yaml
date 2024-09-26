@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/social-graph-mongodb/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: social-graph-mongodb
   name: social-graph-mongodb
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,32 +12,33 @@ spec:
   template:
     metadata:
       labels:
-        service: social-graph-mongodb
         app: social-graph-mongodb
+        service: social-graph-mongodb
     spec:
       containers:
-      - name: "social-graph-mongodb"
+      - args:
+        - --config
+        - /social-network-microservices/config/mongod.conf
         image: docker.io/library/mongo:4.4.6
         imagePullPolicy: IfNotPresent
+        name: social-graph-mongodb
         ports:
         - containerPort: 27017
-        args:
-        - --config
-        - /social-network-microservices/config/mongod.conf           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: social-graph-mongodb-config
-          mountPath: /social-network-microservices/config/mongod.conf
+        - mountPath: /social-network-microservices/config/mongod.conf
+          name: social-graph-mongodb-config
           subPath: mongod.conf
-      volumes:
-      - name: social-graph-mongodb-config
-        configMap:
-          name: social-graph-mongodb
       hostname: social-graph-mongodb
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: social-graph-mongodb
+        name: social-graph-mongodb-config

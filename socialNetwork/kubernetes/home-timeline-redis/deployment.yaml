@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/home-timeline-redis/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: home-timeline-redis
   name: home-timeline-redis
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,31 +12,32 @@ spec:
   template:
     metadata:
       labels:
-        service: home-timeline-redis
         app: home-timeline-redis
+        service: home-timeline-redis
     spec:
       containers:
-      - name: "home-timeline-redis"
+      - args:
+        - /social-network-microservices/config/redis.conf
         image: docker.io/library/redis:6.2.4
         imagePullPolicy: IfNotPresent
+        name: home-timeline-redis
         ports:
         - containerPort: 6379
-        args:
-        - /social-network-microservices/config/redis.conf           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: home-timeline-redis-config
-          mountPath: /social-network-microservices/config/redis.conf
+        - mountPath: /social-network-microservices/config/redis.conf
+          name: home-timeline-redis-config
           subPath: redis.conf
-      volumes:
-      - name: home-timeline-redis-config
-        configMap:
-          name: home-timeline-redis
       hostname: home-timeline-redis
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: home-timeline-redis
+        name: home-timeline-redis-config

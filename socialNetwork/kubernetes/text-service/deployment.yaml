@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/text-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: text-service
   name: text-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: text-service
         app: text-service
+        service: text-service
     spec:
       containers:
-      - name: "text-service"
+      - command:
+        - TextService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: text-service
         ports:
         - containerPort: 9090
-        command: 
-        - TextService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: text-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: text-service-config
           subPath: jaeger-config.yml
-        - name: text-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: text-service-config
           subPath: service-config.json
-      volumes:
-      - name: text-service-config
-        configMap:
-          name: text-service
       hostname: text-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: text-service
+        name: text-service-config

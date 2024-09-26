@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/url-shorten-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: url-shorten-service
   name: url-shorten-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: url-shorten-service
         app: url-shorten-service
+        service: url-shorten-service
     spec:
       containers:
-      - name: "url-shorten-service"
+      - command:
+        - UrlShortenService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: url-shorten-service
         ports:
         - containerPort: 9090
-        command: 
-        - UrlShortenService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: url-shorten-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: url-shorten-service-config
           subPath: jaeger-config.yml
-        - name: url-shorten-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: url-shorten-service-config
           subPath: service-config.json
-      volumes:
-      - name: url-shorten-service-config
-        configMap:
-          name: url-shorten-service
       hostname: url-shorten-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: url-shorten-service
+        name: url-shorten-service-config

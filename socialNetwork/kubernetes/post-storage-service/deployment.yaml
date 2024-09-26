@@ -1,12 +1,10 @@
----
-# Source: social-network/charts/post-storage-service/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     service: post-storage-service
   name: post-storage-service
-spec: 
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -14,34 +12,35 @@ spec:
   template:
     metadata:
       labels:
-        service: post-storage-service
         app: post-storage-service
+        service: post-storage-service
     spec:
       containers:
-      - name: "post-storage-service"
+      - command:
+        - PostStorageService
         image: docker.io/deathstarbench/social-network-microservices:latest
         imagePullPolicy: IfNotPresent
+        name: post-storage-service
         ports:
         - containerPort: 9090
-        command: 
-        - PostStorageService           
         resources:
           limits:
             cpu: 100m
             memory: 128Mi
           requests:
             cpu: 100m
-            memory: 128Mi        
+            memory: 128Mi
         volumeMounts:
-        - name: post-storage-service-config
-          mountPath: /social-network-microservices/config/jaeger-config.yml
+        - mountPath: /social-network-microservices/config/jaeger-config.yml
+          name: post-storage-service-config
           subPath: jaeger-config.yml
-        - name: post-storage-service-config
-          mountPath: /social-network-microservices/config/service-config.json
+        - mountPath: /social-network-microservices/config/service-config.json
+          name: post-storage-service-config
           subPath: service-config.json
-      volumes:
-      - name: post-storage-service-config
-        configMap:
-          name: post-storage-service
       hostname: post-storage-service
       restartPolicy: Always
+      schedulerName: descheduler
+      volumes:
+      - configMap:
+          name: post-storage-service
+        name: post-storage-service-config
