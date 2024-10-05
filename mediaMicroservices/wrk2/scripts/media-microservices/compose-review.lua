@@ -1010,6 +1010,8 @@ local movie_titles = {
   "Flood"
 }
 
+local url = "http:://192.168.138.2:32765" 
+
 function string.random(length)
   if length > 0 then
     return string.random(length - 1) .. charset[math.random(1, #charset)]
