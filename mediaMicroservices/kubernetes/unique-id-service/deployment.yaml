@@ -19,7 +19,9 @@ spec:
     spec:
       containers:
       - name: "unique-id-service"
-        image: docker.io/yg397/media-microservices:latest
+      - command:
+        - UniqueIdService
+        image: localhost:5000/adaim/mediamic:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
