@@ -35,8 +35,7 @@ static int counter = 0;
 static int GetCounter(int64_t timestamp) {
   if (current_timestamp > timestamp) {
     LOG(fatal) << "Timestamps are not incremental.";
-    exit(EXIT_FAILURE);
-  }
+    }
   if (current_timestamp == timestamp) {
     return counter++;
   } else {
