@@ -18,10 +18,10 @@ spec:
         app: unique-id-service
     spec:
       containers:
-      - name: "unique-id-service"
       - command:
         - UniqueIdService
         image: localhost:5000/adaim/mediamic:latest
+        name: unique-id-service
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9090
