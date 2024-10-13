@@ -41,7 +41,6 @@ spec:
           name: profile
       hostname: profile-db
       restartPolicy: Always
-      schedulerName: poseidon
       volumes:
       - name: profile
         persistentVolumeClaim:
