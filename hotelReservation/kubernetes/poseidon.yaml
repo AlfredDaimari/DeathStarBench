@@ -1,8 +1,0 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ""  # This matches all deployments
-spec:
-  template:
-    spec:
-      schedulerName: poseidon
